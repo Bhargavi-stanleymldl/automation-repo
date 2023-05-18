@@ -1,31 +1,38 @@
-from github import Github
-# Replace 'ACCESS_TOKEN' with your actual access token
-access_token = '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'
-# Create a PyGithub instance using the access token
-g = Github(access_token)
+import requests
+import os
+def create_branch(access_token, owner, repo_name, base_branch, new_branch):
+    branch_url = f"https://api.github.com/repos/{owner}/{repo_name}/git/refs"
 
-# Replace 'OWNER' and 'REPO' with the owner and repository name
-owner = 'kailash8465'
-repo_name = 'final_test'
-# Get the repository
-repo = g.get_repo(f'{owner}/{repo_name}')
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
 
-# Create the 'developer' branch from 'main'
-main_branch = repo.get_branch('main')
+    payload = {
+        "ref": f"refs/heads/{new_branch}",
+        "sha": f"refs/heads/{base_branch}"
+    }
 
-repo.create_git_ref(ref='refs/heads/develop', sha=main_branch.commit.sha)
+    response = requests.post(branch_url, json=payload, headers=headers)
+    if response.status_code == 201:
+        print(f"Branch '{new_branch}' created successfully!")
+    else:
+        print(f"Failed to create branch '{new_branch}'")
+        print(f"Response: {response.status_code} - {response.text}")
 
-# Create the 'master' branch from 'main'
-repo.create_git_ref(ref='refs/heads/master', sha=main_branch.commit.sha)
+# Replace YOUR_PAT with your personal access token
+access_token = os.environ.get('GITLAB_ACCESS_TOKEN')
 
-# Create the 'feature/devops' branch from 'developer'
-developer_branch = repo.get_branch('develop')
+# Replace OWNER and REPO_NAME with your repository details
+owner = "Bhargavi-stanleymldl"
+repo_name = "automation-repo"
 
-repo.create_git_ref(ref='refs/heads/feature/devops',
-sha=developer_branch.commit.sha)
+# Create the feature/devops branch from the develop branch
+base_branch = "develop"
+new_branch = "feature/devops"
+create_branch(access_token, owner, repo_name, base_branch, new_branch)
 
-# Create the 'feature/devops-master' branch from 'master'
-master_branch = repo.get_branch('master')
-
-repo.create_git_ref(ref='refs/heads/feature/devops-master',
-sha=master_branch.commit.sha)
+# Create the feature/master-devops branch from the master branch
+base_branch = "main"
+new_branch = "feature/master"
+create_branch(access_token, owner, repo_name, base_branch, new_branch)
