@@ -11,6 +11,6 @@ def enable_branch_protection(repo_owner, repo_name, branch_name, access_token):
 repo_owner = "Bhargavi-stanleymldl"
 repo_name = "automation-repo"
 branch_name = "develop"
-github_access_token = os.environ.get('GITLAB_ACCESS_TOKEN')
+github_access_token = os.environ.get('token')
 
 enable_branch_protection(repo_owner, repo_name, branch_name, github_access_token)
