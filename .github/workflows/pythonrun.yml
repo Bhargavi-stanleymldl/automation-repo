@@ -29,4 +29,8 @@ jobs:
 
     - name: Run python!
       run: |
-        python automate_git.py
+        #python automate_git.py
+        protection_rules.py
+
+
+
